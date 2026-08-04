@@ -54,7 +54,7 @@ Yani değişiklikler sadece sizin tarayıcınızda kalır, sunucuya gitmez. Sol 
 Depoda `.github/workflows/demo-pages.yml` var. Bu dala her push'ta siteyi statik
 olarak derleyip GitHub Pages'e yayınlar.
 
-**Bir kereye mahsus kurulum:** GitHub'da *Settings → Pages → Source* ayarını
+**Kurulum:** Workflow Pages'i kendisi açar. Açamazsa *Settings → Pages → Source*'u
 **GitHub Actions** yap. Sonrası otomatik.
 
 Adres: `https://<kullanıcı>.github.io/turkserangers-website/`

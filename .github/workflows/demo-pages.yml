@@ -3,7 +3,8 @@ name: Demo naar GitHub Pages
 # Publiceert de demo op https://<gebruiker>.github.io/<repo>/ zodat het bestuur
 # de site kan bekijken zonder iets te installeren.
 #
-# Eenmalig instellen: Settings → Pages → Source: "GitHub Actions".
+# De workflow zet Pages zelf aan. Lukt dat niet, zet dan handmatig
+# Settings → Pages → Source op "GitHub Actions" en start deze workflow opnieuw.
 
 on:
   push:
@@ -96,6 +97,10 @@ jobs:
           cp out/404.html out/404.html 2>/dev/null || true
 
       - uses: actions/configure-pages@v5
+        with:
+          # Zet Pages zelf aan als dat nog niet gebeurd is; scheelt een
+          # handmatige stap in de repo-instellingen.
+          enablement: true
 
       - uses: actions/upload-pages-artifact@v3
         with:
