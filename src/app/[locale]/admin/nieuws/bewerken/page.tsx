@@ -1,7 +1,7 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { use, useState, type FormEvent } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense, use, useState, type FormEvent } from "react";
 import { ArrowLeft, Check, Info, Save } from "lucide-react";
 import Link from "next/link";
 import { useAdmin } from "@/admin/store";
@@ -39,12 +39,30 @@ function slugify(value: string): string {
     .slice(0, 70);
 }
 
-export default function AdminArticleEditor({
+/**
+ * Het te bewerken artikel komt uit `?slug=`, niet uit een dynamisch pad.
+ * Reden: een clientpagina kan geen `generateStaticParams` leveren, en zonder
+ * dat kan de site niet volledig statisch geëxporteerd worden.
+ */
+export default function AdminArticleEditorPage({
   params,
 }: {
-  params: Promise<{ locale: string; slug: string }>;
+  params: Promise<{ locale: string }>;
 }) {
-  const { locale: raw, slug } = use(params);
+  return (
+    <Suspense fallback={null}>
+      <AdminArticleEditor params={params} />
+    </Suspense>
+  );
+}
+
+function AdminArticleEditor({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale: raw } = use(params);
+  const slug = useSearchParams().get("slug") ?? "nieuw";
   const locale = isLocale(raw) ? raw : defaultLocale;
   const dict = getDictionary(locale);
   const router = useRouter();
@@ -100,6 +118,7 @@ export default function AdminArticleEditor({
         : locale === "en"
           ? "Image description"
           : "Fotobeschrijving",
+    newArticle: locale === "tr" ? "Yeni haber" : locale === "en" ? "New article" : "Nieuw artikel",
     save: locale === "tr" ? "Taslak olarak kaydet" : locale === "en" ? "Save draft" : "Opslaan als concept",
     submit: locale === "tr" ? "İncelemeye gönder" : locale === "en" ? "Submit for review" : "Indienen ter review",
     publish: locale === "tr" ? "Yayınla" : locale === "en" ? "Publish" : "Publiceren",
@@ -128,7 +147,7 @@ export default function AdminArticleEditor({
       </Link>
 
       <AdminPageHeader
-        title={isNew ? labels.save : draft.title[locale] || draft.slug}
+        title={isNew ? labels.newArticle : draft.title[locale] || draft.slug}
         description={labels.translationHint}
       />
 

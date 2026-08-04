@@ -35,7 +35,7 @@ export default function AdminNewsPage({
         description={`${state.articles.length} ${locale === "tr" ? "haber" : locale === "en" ? "articles" : "artikelen"}`}
         action={
           can(user.role, "news", "create") ? (
-            <Link href={href(locale, "/admin/nieuws/nieuw")} className="btn-primary">
+            <Link href={href(locale, "/admin/nieuws/bewerken?slug=nieuw")} className="btn-primary">
               <Plus className="h-4 w-4" aria-hidden="true" />
               {locale === "tr" ? "Yeni haber" : locale === "en" ? "New article" : "Nieuw artikel"}
             </Link>
@@ -57,7 +57,7 @@ export default function AdminNewsPage({
           <tr key={article.slug} className="border-b border-rangers-border/60 last:border-0">
             <td className="px-4 py-3">
               <Link
-                href={href(locale, `/admin/nieuws/${article.slug}`)}
+                href={href(locale, `/admin/nieuws/bewerken?slug=${article.slug}`)}
                 className="font-medium text-white hover:text-rangers-red"
               >
                 {article.title[locale]}
@@ -79,7 +79,7 @@ export default function AdminNewsPage({
             <td className="px-4 py-3">
               <div className="flex items-center justify-end gap-1">
                 <Link
-                  href={href(locale, `/admin/nieuws/${article.slug}`)}
+                  href={href(locale, `/admin/nieuws/bewerken?slug=${article.slug}`)}
                   className="rounded-md p-2 text-white/50 transition-colors hover:bg-white/5 hover:text-white"
                   aria-label={`${dict.common.readMore}: ${article.title[locale]}`}
                 >

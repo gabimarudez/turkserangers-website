@@ -29,7 +29,7 @@ export default function AdminDashboard({
   const missingConsent = state.players.filter((p) => !p.publishConsent).length;
 
   const quickActions = [
-    { path: "/admin/nieuws/nieuw", label: dict.admin.news, icon: Newspaper, resource: "news" as const },
+    { path: "/admin/nieuws/bewerken?slug=nieuw", label: dict.admin.news, icon: Newspaper, resource: "news" as const },
     { path: "/admin/wedstrijden", label: dict.admin.matches, icon: CalendarDays, resource: "matches" as const },
     { path: "/admin/spelers", label: dict.admin.players, icon: UserSquare2, resource: "players" as const },
     { path: "/admin/media", label: dict.admin.media, icon: ImageIcon, resource: "media" as const },

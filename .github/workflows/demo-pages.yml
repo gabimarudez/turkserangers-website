@@ -1,0 +1,112 @@
+name: Demo naar GitHub Pages
+
+# Publiceert de demo op https://<gebruiker>.github.io/<repo>/ zodat het bestuur
+# de site kan bekijken zonder iets te installeren.
+#
+# Eenmalig instellen: Settings → Pages → Source: "GitHub Actions".
+
+on:
+  push:
+    branches:
+      - claude/turkse-fc-rangers-website-wax3ip
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Middleware verwijderen
+        # Middleware kan niet draaien op een statische host; Next weigert de
+        # export zolang het bestand bestaat. De taalherkenning gebeurt hier
+        # door de redirect-pagina die we hieronder schrijven.
+        run: rm -f src/middleware.ts
+
+      - name: Statische export bouwen
+        env:
+          EXPORT_MODE: "1"
+          DEMO_NOINDEX: "1"
+          BASE_PATH: /${{ github.event.repository.name }}
+        run: npm run build
+
+      - name: Startpagina en Pages-instellingen toevoegen
+        env:
+          BASE_PATH: /${{ github.event.repository.name }}
+        run: |
+          # Zonder dit bestand negeert Pages alle mappen die met _ beginnen,
+          # waaronder _next met alle CSS en JavaScript.
+          touch out/.nojekyll
+
+          # De root van de export is leeg omdat elke pagina onder /nl, /tr of
+          # /en zit. Deze pagina kiest een taal en stuurt door.
+          cat > out/index.html <<HTML
+          <!doctype html>
+          <html lang="nl">
+            <head>
+              <meta charset="utf-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1">
+              <meta name="robots" content="noindex, nofollow">
+              <title>FC Turkse Rangers</title>
+              <style>
+                body {
+                  margin: 0;
+                  display: grid;
+                  place-items: center;
+                  min-height: 100vh;
+                  background: #08090b;
+                  color: #6b7280;
+                  font: 14px system-ui, sans-serif;
+                }
+              </style>
+              <script>
+                (function () {
+                  var supported = ["nl", "tr", "en"];
+                  var wanted = (navigator.language || "nl").slice(0, 2).toLowerCase();
+                  var locale = supported.indexOf(wanted) === -1 ? "nl" : wanted;
+                  location.replace("${BASE_PATH}/" + locale + "/");
+                })();
+              </script>
+            </head>
+            <body>
+              <p>
+                <a href="${BASE_PATH}/nl/" style="color:#e11d2e">Doorgaan naar de website</a>
+              </p>
+            </body>
+          </html>
+          HTML
+
+          # Pages serveert 404.html bij een onbekend pad.
+          cp out/404.html out/404.html 2>/dev/null || true
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: out
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

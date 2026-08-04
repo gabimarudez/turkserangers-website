@@ -49,6 +49,33 @@ Yani değişiklikler sadece sizin tarayıcınızda kalır, sunucuya gitmez. Sol 
 
 ---
 
+## Canlı demo (GitHub Pages)
+
+Depoda `.github/workflows/demo-pages.yml` var. Bu dala her push'ta siteyi statik
+olarak derleyip GitHub Pages'e yayınlar.
+
+**Bir kereye mahsus kurulum:** GitHub'da *Settings → Pages → Source* ayarını
+**GitHub Actions** yap. Sonrası otomatik.
+
+Adres: `https://<kullanıcı>.github.io/turkserangers-website/`
+
+Yayınlanan sürüm `noindex` etiketiyle çıkar — örnek verilerle dolu bir demo
+Google'a düşmesin diye.
+
+Kendi bilgisayarında aynı çıktıyı almak istersen:
+
+```bash
+rm src/middleware.ts   # middleware statik hostta çalışmaz
+EXPORT_MODE=1 DEMO_NOINDEX=1 BASE_PATH=/turkserangers-website npm run build
+# çıktı: out/
+```
+
+> Not: Statik sürümde yönetim paneli tamamen çalışır (tarayıcıda döner), ama
+> gerçek veritabanı gelince sunucu tarafı gerekecek. O aşamada Netlify veya
+> Vercel'e geçilir; ikisi de bu depoyu doğrudan bağlayabilir.
+
+---
+
 ## Diller
 
 Hollandaca (`nl`, varsayılan), Türkçe (`tr`) ve İngilizce (`en`).

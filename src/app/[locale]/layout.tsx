@@ -47,6 +47,11 @@ export async function generateMetadata({
       locale,
       type: "website",
     },
+    // De demo-uitgave staat met voorbeelddata online. Die mag niet in Google
+    // terechtkomen naast — of in plaats van — de echte clubsite.
+    ...(process.env.DEMO_NOINDEX === "1"
+      ? { robots: { index: false, follow: false } }
+      : {}),
   };
 }
 
