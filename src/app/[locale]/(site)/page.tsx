@@ -95,14 +95,25 @@ export default async function HomePage({
       {/* ───────────────────────── Hero ───────────────────────── */}
       <section className="relative flex min-h-[92vh] items-end overflow-hidden bg-rangers-black">
         <PhotoSlot
-          alt={dict.home.heroEyebrow}
+          src={club.images.hero}
+          alt={
+            locale === "tr"
+              ? "Anfield sahası ve Vural Soylu tribünü"
+              : locale === "en"
+                ? "The Anfield pitch and the Vural Soylu stand"
+                : "Het terrein aan Anfield met de Vural Soylu-tribune"
+          }
           className="absolute inset-0 h-full w-full"
           decorative
           priority
         />
+        {/*
+          De foto is bij daglicht genomen; zonder deze extra donkere laag
+          leest de witte titel er niet op.
+        */}
         <div
           aria-hidden="true"
-          className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-black/20"
+          className="absolute inset-0 bg-gradient-to-t from-black via-black/75 to-black/45"
         />
         <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden">
           <div className="absolute -left-24 top-1/4 h-72 w-72 animate-flarePulse rounded-full bg-rangers-red/25 blur-[90px]" />
@@ -411,12 +422,13 @@ export default async function HomePage({
           </Reveal>
           <Reveal delay={0.15}>
             <PhotoSlot
+              src={club.images.ground}
               alt={
                 locale === "tr"
-                  ? "Gün batımında kulüp binası"
+                  ? "Kulübün sahası ve tribünü"
                   : locale === "en"
-                    ? "The clubhouse at sunset"
-                    : "Clubgebouw bij zonsondergang"
+                    ? "The club's pitch and stand"
+                    : "Het terrein en de tribune van de club"
               }
               className="aspect-[16/10] w-full rounded-xl lg:aspect-[4/3]"
             />

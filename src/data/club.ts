@@ -31,6 +31,16 @@ export const club = {
     members: 400,
     volunteers: 50,
   },
+  /**
+   * Clubbeelden. Elk pad wijst naar public/images/. Zolang een sleutel leeg
+   * blijft, toont de site het grijze kader in plaats van een gebroken foto.
+   */
+  images: {
+    hero: "/images/terrein-tribune.jpg",
+    ground: "/images/terrein-tribune-klein.jpg",
+    logo: "",
+    teamPhoto: "",
+  },
   mapsUrl:
     "https://www.google.com/maps/search/?api=1&query=Hoevenzavellaan%20120%2C%203600%20Genk",
 };
