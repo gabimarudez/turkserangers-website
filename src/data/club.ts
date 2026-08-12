@@ -38,7 +38,7 @@ export const club = {
   images: {
     hero: "/images/terrein-tribune.jpg",
     ground: "/images/terrein-tribune-klein.jpg",
-    logo: "",
+    logo: "/images/logo.png",
     teamPhoto: "",
   },
   mapsUrl:
