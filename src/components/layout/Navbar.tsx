@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { ChevronDown, Menu, Shield, X } from "lucide-react";
+import { ChevronDown, Menu, X } from "lucide-react";
+import { ClubCrest } from "@/components/ui/ClubCrest";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 import { href } from "@/i18n";
 import type { Locale } from "@/i18n/config";
@@ -96,10 +97,12 @@ export function Navbar({ locale, dict }: NavbarProps) {
     >
       <div className="container flex h-20 items-center justify-between gap-4">
         <Link href={href(locale, "/")} className="flex shrink-0 items-center gap-3">
-          <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-rangers-surface2 ring-1 ring-white/10">
-            {/* Het clublogo wordt hier geplaatst zodra we het bestand hebben. */}
-            <Shield className="h-6 w-6 text-rangers-red" aria-hidden="true" />
-          </span>
+          <ClubCrest
+            className="h-12 w-12 shrink-0"
+            logoClassName="h-14 w-auto"
+            iconClassName="h-6 w-6"
+            priority
+          />
           <span className="leading-tight">
             <span className="block font-display text-base font-semibold uppercase tracking-wide text-white">
               {club.name}

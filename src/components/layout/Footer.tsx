@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { Facebook, Instagram, Mail, MapPin, Phone, Shield, Youtube } from "lucide-react";
+import { Facebook, Instagram, Mail, MapPin, Phone, Youtube } from "lucide-react";
+import { ClubCrest } from "@/components/ui/ClubCrest";
 import { href } from "@/i18n";
 import type { Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n/dictionaries/nl";
@@ -65,9 +66,7 @@ export function Footer({ locale, dict }: FooterProps) {
       <div className="container grid grid-cols-1 gap-10 py-14 sm:grid-cols-2 lg:grid-cols-6">
         <div className="sm:col-span-2 lg:col-span-1">
           <Link href={href(locale, "/")} className="flex items-center gap-3">
-            <span className="flex h-10 w-10 items-center justify-center rounded-full bg-rangers-surface2 ring-1 ring-white/10">
-              <Shield className="h-5 w-5 text-rangers-red" aria-hidden="true" />
-            </span>
+            <ClubCrest className="h-10 w-10" logoClassName="h-12 w-auto" iconClassName="h-5 w-5" />
             <span className="leading-tight">
               <span className="block font-display text-sm font-semibold uppercase tracking-wide">
                 {club.name}

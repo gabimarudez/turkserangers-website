@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import "../globals.css";
 import { getDictionary } from "@/i18n";
 import { isLocale, locales, type Locale } from "@/i18n/config";
+import { club } from "@/data/club";
 
 const display = Archivo({
   subsets: ["latin", "latin-ext"],
@@ -41,6 +42,10 @@ export async function generateMetadata({
       canonical: `/${locale}`,
       languages: Object.fromEntries(locales.map((l) => [l, `/${l}`])),
     },
+    // Het clubwapen dient ook als tabbladicoon, zodra het bestand er is.
+    ...(club.images.logo
+      ? { icons: { icon: club.images.logo, apple: club.images.logo } }
+      : {}),
     openGraph: {
       title: dict.meta.title,
       description: dict.meta.description,
