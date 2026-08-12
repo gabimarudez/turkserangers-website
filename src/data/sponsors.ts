@@ -68,7 +68,11 @@ export const albums: GalleryAlbum[] = [
       { alt: { nl: "Penaltywedstrijd voor de jongsten", tr: "Küçükler için penaltı yarışması", en: "Penalty contest for the youngest" } },
       { alt: { nl: "Medailles voor alle deelnemers", tr: "Tüm katılımcılara madalya", en: "Medals for every participant" } },
       { alt: { nl: "Ouders langs de lijn", tr: "Saha kenarında veliler", en: "Parents on the touchline" } },
-      { alt: { nl: "Groepsfoto van de jeugdwerking", tr: "Altyapı grup fotoğrafı", en: "Youth academy group photo" } },
+      {
+        // Echte clubfoto; de rest van dit album wacht nog op beeld.
+        src: "/images/jeugd-groepsfoto-klein.jpg",
+        alt: { nl: "Groepsfoto van de jeugdwerking", tr: "Altyapı grup fotoğrafı", en: "Youth academy group photo" },
+      },
     ],
   },
   {

@@ -40,6 +40,7 @@ export const club = {
     ground: "/images/terrein-tribune-klein.jpg",
     logo: "/images/logo.png",
     teamPhoto: "",
+    youth: "/images/jeugd-groepsfoto.jpg",
   },
   mapsUrl:
     "https://www.google.com/maps/search/?api=1&query=Hoevenzavellaan%20120%2C%203600%20Genk",

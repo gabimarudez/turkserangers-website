@@ -2,9 +2,11 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Clock, Heart, ShieldCheck, Sparkles } from "lucide-react";
 import { PageHeader } from "@/components/ui/Section";
+import { PhotoSlot } from "@/components/ui/PhotoSlot";
 import { Reveal } from "@/components/ui/Reveal";
 import { getDictionary, href } from "@/i18n";
 import { isLocale } from "@/i18n/config";
+import { club } from "@/data/club";
 import { teamsByOrder } from "@/data/teams";
 
 export async function generateMetadata({
@@ -66,6 +68,30 @@ export default async function YouthPage({
       />
 
       <div className="container space-y-16 py-14 sm:py-16">
+        <Reveal>
+          <figure>
+            <PhotoSlot
+              src={club.images.youth}
+              alt={
+                locale === "tr"
+                  ? "Vural Soylu tribününde toplanan bütün altyapı takımları"
+                  : locale === "en"
+                    ? "All youth teams together in the Vural Soylu stand"
+                    : "Alle jeugdploegen samen op de Vural Soylu-tribune"
+              }
+              className="aspect-[16/9] w-full rounded-xl sm:aspect-[21/9]"
+              showLabel={false}
+            />
+            <figcaption className="mt-3 text-xs text-white/40">
+              {locale === "tr"
+                ? "U6'dan U17'ye kadar bütün altyapı takımları, sezon açılışında."
+                : locale === "en"
+                  ? "Every youth team, from U6 to U17, at the start of the season."
+                  : "Alle jeugdploegen, van U6 tot U17, bij de start van het seizoen."}
+            </figcaption>
+          </figure>
+        </Reveal>
+
         <section>
           <Reveal>
             <h2 className="section-heading rule-accent mb-8">
