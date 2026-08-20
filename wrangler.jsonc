@@ -10,6 +10,13 @@
   "name": "turkserangers-website",
   "compatibility_date": "2026-08-20",
 
+  // Wrangler bouwt de site zelf, vlak voor het uploaden. Dat staat hier en
+  // niet alleen in het instellingenscherm van Cloudflare: zo werkt een deploy
+  // ook wanneer dat veld leeg is, en staat overal dezelfde opdracht.
+  "build": {
+    "command": "npm run build:static"
+  },
+
   "assets": {
     "directory": "./out",
 
