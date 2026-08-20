@@ -31,8 +31,9 @@ import {
   playedMatches,
   standingFor,
 } from "@/data/matches";
-import { albums } from "@/data/sponsors";
+import { albums, allPhotos } from "@/data/sponsors";
 import { sponsorsByTier } from "@/data/sponsors";
+import { dataReady } from "@/data/status";
 
 export default async function HomePage({
   params,
@@ -43,52 +44,84 @@ export default async function HomePage({
   if (!isLocale(locale)) notFound();
   const dict = getDictionary(locale);
 
-  const featured = newsByDate[0];
-  const secondary = newsByDate.slice(1, 4);
-  const upcoming = nextMatch("a-kern");
-  const last = lastResult("a-kern");
-  const recent = playedMatches("a-kern").slice(0, 4);
-  const standing = standingFor("a-kern");
+  // De startpagina laat weg wat er nog niet is, in plaats van er "volgt
+  // binnenkort" te zetten: hij hoort te tonen wat de club wél heeft. De
+  // pagina's zelf (Nieuws, Wedstrijden) leggen uit dat het nog komt.
+  const featured = dataReady.news ? newsByDate[0] : undefined;
+  const secondary = dataReady.news ? newsByDate.slice(1, 4) : [];
+  const upcoming = dataReady.matches ? nextMatch("a-kern") : undefined;
+  const last = dataReady.matches ? lastResult("a-kern") : undefined;
+  const recent = dataReady.matches ? playedMatches("a-kern").slice(0, 4) : [];
+  const standing = dataReady.matches ? standingFor("a-kern") : undefined;
   const position = standing ? ownRow(standing) : undefined;
   const teams = featuredTeamSlugs
     .map((slug) => teamBySlug(slug))
     .filter((t): t is NonNullable<typeof t> => Boolean(t));
   const galleryPhotos = albums.flatMap((a) => a.photos).slice(0, 5);
 
-  const quickLinks = [
-    {
-      icon: Calendar,
-      label: dict.home.nextMatch,
-      value: upcoming
-        ? `${club.shortName} — ${upcoming.opponent}`
-        : dict.matches.noUpcoming,
-      meta: upcoming
-        ? `${formatWeekday(upcoming.kickoff, locale)} · ${formatTime(upcoming.kickoff, locale)}`
-        : "",
-      path: "/wedstrijden",
-    },
-    {
-      icon: Trophy,
-      label: dict.home.lastResult,
-      value: last ? `${last.scoreFor} — ${last.scoreAgainst}` : "—",
-      meta: last ? `${club.shortName} vs ${last.opponent}` : "",
-      path: "/wedstrijden#uitslagen",
-    },
-    {
-      icon: BarChart3,
-      label: dict.home.standing,
-      value: position ? `${position.position}.` : "—",
-      meta: standing ? `${standing.competition[locale]} · ${standing.season}` : "",
-      path: "/wedstrijden#klassement",
-    },
-    {
-      icon: ImageIcon,
-      label: dict.gallery.heading,
-      value: `${albums.reduce((sum, a) => sum + a.photos.length, 0)} ${dict.gallery.photos}`,
-      meta: dict.home.galleryTeaser,
-      path: "/fotogalerij",
-    },
-  ];
+  const galleryLink = {
+    icon: ImageIcon,
+    label: dict.gallery.heading,
+    value: `${albums.reduce((sum, a) => sum + a.photos.length, 0)} ${dict.gallery.photos}`,
+    meta: dict.home.galleryTeaser,
+    path: "/fotogalerij",
+  };
+
+  // Drie van de vier tegels gaan over wedstrijden. Zolang die gegevens er niet
+  // zijn, wijst de strip naar wat er wél staat — anders staan er drie streepjes.
+  const quickLinks = dataReady.matches
+    ? [
+        {
+          icon: Calendar,
+          label: dict.home.nextMatch,
+          value: upcoming
+            ? `${club.shortName} — ${upcoming.opponent}`
+            : dict.matches.noUpcoming,
+          meta: upcoming
+            ? `${formatWeekday(upcoming.kickoff, locale)} · ${formatTime(upcoming.kickoff, locale)}`
+            : "",
+          path: "/wedstrijden",
+        },
+        {
+          icon: Trophy,
+          label: dict.home.lastResult,
+          value: last ? `${last.scoreFor} — ${last.scoreAgainst}` : "—",
+          meta: last ? `${club.shortName} vs ${last.opponent}` : "",
+          path: "/wedstrijden#uitslagen",
+        },
+        {
+          icon: BarChart3,
+          label: dict.home.standing,
+          value: position ? `${position.position}.` : "—",
+          meta: standing ? `${standing.competition[locale]} · ${standing.season}` : "",
+          path: "/wedstrijden#klassement",
+        },
+        galleryLink,
+      ]
+    : [
+        {
+          icon: Users,
+          label: dict.nav.teams,
+          value: String(teamsByOrder.length),
+          meta: dict.home.teamsEyebrow,
+          path: "/teams",
+        },
+        {
+          icon: Shield,
+          label: dict.nav.youth,
+          value: dict.youth.eyebrow,
+          meta: dict.nav.becomeMember,
+          path: "/jeugdopleiding",
+        },
+        galleryLink,
+        {
+          icon: Calendar,
+          label: dict.nav.contact,
+          value: club.ground,
+          meta: `${club.address.street}, ${club.address.city}`,
+          path: "/contact",
+        },
+      ];
 
   return (
     <>
@@ -186,8 +219,10 @@ export default async function HomePage({
       </Reveal>
 
       {/* ───────────────────────── Nieuws ───────────────────────── */}
+      {(featured || upcoming || recent.length > 0) && (
       <section className="container py-16 sm:py-20">
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
+        <div className={`grid grid-cols-1 gap-8 ${featured ? "lg:grid-cols-3" : ""}`}>
+          {featured && (
           <div className="lg:col-span-2">
             <SectionHeading
               eyebrow={dict.home.newsEyebrow}
@@ -218,6 +253,7 @@ export default async function HomePage({
               </Reveal>
             </div>
           </div>
+          )}
 
           <div className="space-y-5">
             {upcoming && (
@@ -269,6 +305,7 @@ export default async function HomePage({
           </div>
         </div>
       </section>
+      )}
 
       {/* ───────────────────────── Teams ───────────────────────── */}
       <section className="container py-8 sm:py-12">
@@ -444,7 +481,7 @@ export default async function HomePage({
         />
         <Reveal>
           <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 lg:grid-cols-7">
-            {albums[1].photos.concat(albums[2].photos).slice(0, 6).map((photo, index) => (
+            {allPhotos.slice(0, 6).map((photo, index) => (
               <div
                 key={`ig-${index}`}
                 className="group relative aspect-square overflow-hidden rounded-lg"

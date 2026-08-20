@@ -2,6 +2,7 @@ import type { MetadataRoute } from "next";
 import { locales } from "@/i18n/config";
 import { siteUrl } from "@/site";
 import { news } from "@/data/news";
+import { dataReady } from "@/data/status";
 import { teams } from "@/data/teams";
 
 // Bij een statische export wordt dit bestand één keer gemaakt, tijdens de build.
@@ -51,8 +52,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
   return [
     ...staticPaths.flatMap(({ path, priority }) => entry(path, priority)),
     ...teams.flatMap((team) => entry(`teams/${team.slug}`, 0.6)),
-    ...news.flatMap((article) =>
-      entry(`nieuws/${article.slug}`, 0.5, article.publishedAt),
-    ),
+    // Artikelpagina's worden niet gebouwd zolang de artikelen voorbeelden
+    // zijn; ze hier toch noemen levert Google enkel 404's op.
+    ...(dataReady.news
+      ? news.flatMap((article) =>
+          entry(`nieuws/${article.slug}`, 0.5, article.publishedAt),
+        )
+      : []),
   ];
 }

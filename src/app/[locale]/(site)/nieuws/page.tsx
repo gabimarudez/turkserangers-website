@@ -1,10 +1,12 @@
 import { notFound } from "next/navigation";
 import { PageHeader } from "@/components/ui/Section";
 import { Reveal } from "@/components/ui/Reveal";
+import { ComingSoon } from "@/components/ui/ComingSoon";
 import { NewsGridCard } from "@/components/site/NewsCard";
 import { getDictionary } from "@/i18n";
 import { isLocale } from "@/i18n/config";
 import { newsByDate } from "@/data/news";
+import { dataReady } from "@/data/status";
 
 export async function generateMetadata({
   params,
@@ -34,13 +36,19 @@ export default async function NewsPage({
       />
 
       <div className="container py-14 sm:py-16">
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {newsByDate.map((article, index) => (
-            <Reveal key={article.slug} delay={Math.min(index, 5) * 0.06}>
-              <NewsGridCard article={article} locale={locale} dict={dict} />
-            </Reveal>
-          ))}
-        </div>
+        {!dataReady.news ? (
+          <Reveal>
+            <ComingSoon title={dict.pending.heading} body={dict.pending.news} />
+          </Reveal>
+        ) : (
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {newsByDate.map((article, index) => (
+              <Reveal key={article.slug} delay={Math.min(index, 5) * 0.06}>
+                <NewsGridCard article={article} locale={locale} dict={dict} />
+              </Reveal>
+            ))}
+          </div>
+        )}
       </div>
     </>
   );

@@ -3,6 +3,7 @@ import { Clock } from "lucide-react";
 import { PageHeader } from "@/components/ui/Section";
 import { Reveal } from "@/components/ui/Reveal";
 import { PhotoSlot } from "@/components/ui/PhotoSlot";
+import { ComingSoon } from "@/components/ui/ComingSoon";
 import { SquadTable } from "@/components/site/SquadTable";
 import { MatchRow } from "@/components/site/MatchCard";
 import { StandingsTable } from "@/components/site/StandingsTable";
@@ -12,6 +13,7 @@ import { teamBySlug, teams } from "@/data/teams";
 import { playersByTeam } from "@/data/players";
 import { matchesByTeam, standingFor } from "@/data/matches";
 import { staffById } from "@/data/club";
+import { dataReady } from "@/data/status";
 
 export function generateStaticParams() {
   return locales.flatMap((locale) =>
@@ -43,11 +45,15 @@ export default async function TeamPage({
 
   const dict = getDictionary(locale);
   const squad = playersByTeam(team.slug);
-  const fixtures = matchesByTeam(team.slug);
-  const standing = standingFor(team.slug);
-  const coaches = team.coachIds
-    .map((id) => staffById(id))
-    .filter((c): c is NonNullable<typeof c> => Boolean(c));
+  // Kalender, klassement en staf komen uit voorbeeldgegevens zolang de club
+  // ze niet aangeleverd heeft. Leeg laten laat de secties eronder vanzelf weg.
+  const fixtures = dataReady.matches ? matchesByTeam(team.slug) : [];
+  const standing = dataReady.matches ? standingFor(team.slug) : undefined;
+  const coaches = dataReady.staff
+    ? team.coachIds
+        .map((id) => staffById(id))
+        .filter((c): c is NonNullable<typeof c> => Boolean(c))
+    : [];
 
   return (
     <>
@@ -62,6 +68,9 @@ export default async function TeamPage({
         <section className="grid grid-cols-1 gap-8 lg:grid-cols-3">
           <Reveal className="lg:col-span-2">
             <h2 className="section-heading rule-accent mb-6">{dict.teams.staffHeading}</h2>
+            {coaches.length === 0 ? (
+              <ComingSoon title={dict.pending.heading} body={dict.pending.staff} />
+            ) : (
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
               {coaches.map((coach) => (
                 <div key={coach.id} className="card flex items-center gap-4 p-4">
@@ -80,6 +89,7 @@ export default async function TeamPage({
                 </div>
               ))}
             </div>
+            )}
           </Reveal>
 
           <Reveal delay={0.1}>
@@ -108,7 +118,11 @@ export default async function TeamPage({
           <Reveal>
             <h2 className="section-heading rule-accent mb-8">{dict.teams.squadHeading}</h2>
           </Reveal>
-          <SquadTable players={squad} locale={locale} dict={dict} />
+          {dataReady.squads ? (
+            <SquadTable players={squad} locale={locale} dict={dict} />
+          ) : (
+            <ComingSoon title={dict.pending.heading} body={dict.pending.squad} />
+          )}
         </section>
 
         {/* Kalender */}

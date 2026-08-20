@@ -7,8 +7,19 @@ import { NewsGridCard } from "@/components/site/NewsCard";
 import { formatDate, getDictionary, href } from "@/i18n";
 import { isLocale, locales } from "@/i18n/config";
 import { articleBySlug, categoryLabels, news, newsByDate } from "@/data/news";
+import { dataReady } from "@/data/status";
 
 export function generateStaticParams() {
+  // De artikelen in src/data/news.ts zijn voorbeelden. Zolang dat zo is wordt
+  // er geen enkele artikelpagina gebouwd — ook niet als 404-pagina, want dan
+  // zouden de verzonnen koppen alsnog in de HTML belanden.
+  //
+  // Een lege lijst weigert Next bij een statische export, dus blijft er één
+  // adres over dat nergens naartoe leidt. Dat houdt de route geldig.
+  if (!dataReady.news) {
+    return locales.map((locale) => ({ locale, slug: "geen-berichten" }));
+  }
+
   return locales.flatMap((locale) =>
     news.map((article) => ({ locale, slug: article.slug })),
   );
@@ -36,6 +47,11 @@ export default async function ArticlePage({
 }) {
   const { locale, slug } = await params;
   if (!isLocale(locale)) notFound();
+
+  // De artikelen in src/data/news.ts zijn voorbeelden. Ze staan nergens in een
+  // overzicht, maar een directe link zou ze anders alsnog openen — en niets
+  // aan zo'n pagina verraadt dat het bericht verzonnen is.
+  if (!dataReady.news) notFound();
 
   const article = articleBySlug(slug);
   if (!article) notFound();

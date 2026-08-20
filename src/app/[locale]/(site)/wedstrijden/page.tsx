@@ -1,11 +1,13 @@
 import { notFound } from "next/navigation";
 import { PageHeader } from "@/components/ui/Section";
 import { Reveal } from "@/components/ui/Reveal";
+import { ComingSoon } from "@/components/ui/ComingSoon";
 import { MatchRow } from "@/components/site/MatchCard";
 import { StandingsTable } from "@/components/site/StandingsTable";
 import { getDictionary } from "@/i18n";
 import { isLocale } from "@/i18n/config";
 import { playedMatches, standings, upcomingMatches } from "@/data/matches";
+import { dataReady } from "@/data/status";
 
 export async function generateMetadata({
   params,
@@ -38,6 +40,12 @@ export default async function MatchesPage({
       />
 
       <div className="container space-y-16 py-14 sm:py-16">
+        {!dataReady.matches ? (
+          <Reveal>
+            <ComingSoon title={dict.pending.heading} body={dict.pending.matches} />
+          </Reveal>
+        ) : (
+        <>
         <section id="kalender" className="scroll-mt-24">
           <Reveal>
             <h2 className="section-heading rule-accent mb-8">{dict.matches.upcoming}</h2>
@@ -84,6 +92,8 @@ export default async function MatchesPage({
             ))}
           </div>
         </section>
+        </>
+        )}
       </div>
     </>
   );

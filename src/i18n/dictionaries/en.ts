@@ -47,6 +47,20 @@ const en: Dictionary = {
     vs: "VS",
     photoPlaceholder: "Photo coming soon",
   },
+  notFound: {
+    code: "404",
+    heading: "This page does not exist",
+    body: "The link is no longer valid, or the page has moved. You can find everything again from the home page.",
+    cta: "Go to the home page",
+  },
+  pending: {
+    heading: "Coming soon",
+    board: "The board members are still being confirmed. The list will appear here as soon as it is in.",
+    staff: "The coaches and staff are still being confirmed and will appear here shortly.",
+    squad: "This team's squad list is still being compiled. Names of underage players are published only with written consent from their parents.",
+    matches: "This season's fixtures, results and league table have not been entered yet.",
+    news: "No club news has been published yet. The first article will appear here soon.",
+  },
   home: {
     heroEyebrow: "More than a club",
     heroTagline: "Passion. Family. Football.",

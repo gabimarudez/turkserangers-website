@@ -47,6 +47,20 @@ const tr: Dictionary = {
     vs: "VS",
     photoPlaceholder: "Fotoğraf eklenecek",
   },
+  notFound: {
+    code: "404",
+    heading: "Böyle bir sayfa yok",
+    body: "Bağlantı artık geçerli değil ya da sayfa taşınmış. Ana sayfadan her şeye ulaşabilirsiniz.",
+    cta: "Ana sayfaya dön",
+  },
+  pending: {
+    heading: "Çok yakında",
+    board: "Yönetim kurulu üyeleri henüz teyit ediliyor. Liste geldiğinde burada yer alacak.",
+    staff: "Teknik ekip ve görevliler henüz teyit ediliyor, yakında burada olacaklar.",
+    squad: "Bu takımın oyuncu listesi henüz hazırlanıyor. Reşit olmayan oyuncuların isimleri yalnızca velilerinin yazılı izniyle yayımlanır.",
+    matches: "Bu sezonun fikstürü, sonuçları ve puan durumu henüz girilmedi.",
+    news: "Henüz kulüp haberi yayımlanmadı. İlk haber yakında burada olacak.",
+  },
   home: {
     heroEyebrow: "Bir kulüpten fazlası",
     heroTagline: "Tutku. Aile. Futbol.",

@@ -3,9 +3,11 @@ import { Mail } from "lucide-react";
 import { PageHeader } from "@/components/ui/Section";
 import { Reveal } from "@/components/ui/Reveal";
 import { PhotoSlot } from "@/components/ui/PhotoSlot";
+import { ComingSoon } from "@/components/ui/ComingSoon";
 import { getDictionary } from "@/i18n";
 import { isLocale } from "@/i18n/config";
 import { board, club, coaches, history } from "@/data/club";
+import { dataReady } from "@/data/status";
 import { teamBySlug } from "@/data/teams";
 
 export async function generateMetadata({
@@ -104,6 +106,11 @@ export default async function ClubPage({
           <p className="mb-8 max-w-2xl text-white/60">{dict.club.boardIntro}</p>
         </Reveal>
 
+        {!dataReady.board ? (
+          <Reveal>
+            <ComingSoon title={dict.pending.heading} body={dict.pending.board} />
+          </Reveal>
+        ) : (
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
           {board.map((member, index) => (
             <Reveal key={member.id} delay={index * 0.05}>
@@ -135,6 +142,7 @@ export default async function ClubPage({
             </Reveal>
           ))}
         </div>
+        )}
       </section>
 
       {/* Trainers & staf */}
@@ -143,6 +151,9 @@ export default async function ClubPage({
           <Reveal>
             <h2 className="section-heading rule-accent mb-8">{dict.club.staffHeading}</h2>
           </Reveal>
+          {!dataReady.staff ? (
+            <ComingSoon title={dict.pending.heading} body={dict.pending.staff} />
+          ) : (
           <div className="grid grid-cols-1 gap-px overflow-hidden rounded-xl border border-rangers-border bg-rangers-border sm:grid-cols-2 lg:grid-cols-3">
             {coaches.map((coach) => (
               <div key={coach.id} className="flex items-center gap-4 bg-rangers-surface p-4">
@@ -161,6 +172,7 @@ export default async function ClubPage({
               </div>
             ))}
           </div>
+          )}
         </div>
       </section>
 

@@ -47,6 +47,20 @@ const nl = {
     vs: "VS",
     photoPlaceholder: "Foto volgt",
   },
+  notFound: {
+    code: "404",
+    heading: "Deze pagina bestaat niet",
+    body: "De link klopt niet meer, of de pagina is verplaatst. Via de startpagina vind je alles terug.",
+    cta: "Naar de startpagina",
+  },
+  pending: {
+    heading: "Volgt binnenkort",
+    board: "De bestuursleden worden nog bevestigd. Zodra de lijst binnen is, staat ze hier.",
+    staff: "De trainers en stafleden worden nog bevestigd en verschijnen hier binnenkort.",
+    squad: "De spelerslijst van deze ploeg wordt nog samengesteld. Namen van minderjarige spelers verschijnen enkel met schriftelijke toestemming van de ouders.",
+    matches: "De kalender, de uitslagen en het klassement van dit seizoen worden nog ingevoerd.",
+    news: "Er zijn nog geen clubberichten gepubliceerd. Het eerste nieuws verschijnt hier binnenkort.",
+  },
   home: {
     heroEyebrow: "Meer dan een club",
     heroTagline: "Passie. Familie. Voetbal.",
