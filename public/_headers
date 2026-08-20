@@ -1,0 +1,17 @@
+# Extra HTTP-headers voor Cloudflare Pages. Andere hosts negeren dit bestand.
+
+/*
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: SAMEORIGIN
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: geolocation=(), camera=(), microphone=(), interest-cohort=()
+
+# Deze bestanden hebben een unieke naam per build en veranderen dus nooit meer.
+# Een jaar cache scheelt de bezoeker bij elk volgend bezoek een download.
+/_next/static/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Clubfoto's wijzigen zelden, maar wel onder dezelfde naam. Een maand cache met
+# een dag speling: nieuw beeld is binnen een dag overal zichtbaar.
+/images/*
+  Cache-Control: public, max-age=2592000, stale-while-revalidate=86400

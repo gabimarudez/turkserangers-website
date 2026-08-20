@@ -19,9 +19,10 @@ npm run dev      # http://localhost:3000
 Diğer komutlar:
 
 ```bash
-npm run build      # üretim derlemesi
-npm start          # derlenmiş sürümü çalıştırır
-npm run typecheck  # TypeScript kontrolü
+npm run build         # üretim derlemesi
+npm run build:static  # statik site → out/ (yayına giden sürüm)
+npm start             # derlenmiş sürümü çalıştırır
+npm run typecheck     # TypeScript kontrolü
 ```
 
 ---
@@ -49,30 +50,51 @@ Yani değişiklikler sadece sizin tarayıcınızda kalır, sunucuya gitmez. Sol 
 
 ---
 
-## Canlı demo (GitHub Pages)
+## Yayınlama (Cloudflare Pages)
 
-Depoda `.github/workflows/demo-pages.yml` var. Bu dala her push'ta siteyi statik
-olarak derleyip GitHub Pages'e yayınlar.
+Site **statik** derlenir: sunucu yok, veritabanı yok, ziyaretçi başına ücret yok.
+`npm run build:static` komutu `out/` klasörünü üretir; oradaki dosyalar olduğu
+gibi yayınlanır.
 
-**Kurulum:** Workflow Pages'i kendisi açar. Açamazsa *Settings → Pages → Source*'u
-**GitHub Actions** yap. Sonrası otomatik.
+Domain zaten Cloudflare'de kayıtlı olduğu için hosting de Cloudflare Pages'te —
+DNS aynı panelde, sertifika otomatik.
 
-Adres: `https://<kullanıcı>.github.io/turkserangers-website/`
+**Cloudflare Pages ayarları** (*Workers & Pages → Create → Pages → Connect to Git*):
 
-Yayınlanan sürüm `noindex` etiketiyle çıkar — örnek verilerle dolu bir demo
-Google'a düşmesin diye.
+| Alan | Değer |
+|---|---|
+| Framework preset | None |
+| Build command | `npm run build:static` |
+| Build output directory | `out` |
+| Production branch | `main` |
 
-Kendi bilgisayarında aynı çıktıyı almak istersen:
+**Ortam değişkenleri** (*Settings → Environment variables → Production*):
 
-```bash
-rm src/middleware.ts   # middleware statik hostta çalışmaz
-EXPORT_MODE=1 DEMO_NOINDEX=1 BASE_PATH=/turkserangers-website npm run build
-# çıktı: out/
-```
+| Değişken | Değer | Ne işe yarar |
+|---|---|---|
+| `SITE_URL` | `https://turkserangers.com` | Canonical link, sitemap, paylaşım görseli |
 
-> Not: Statik sürümde yönetim paneli tamamen çalışır (tarayıcıda döner), ama
-> gerçek veritabanı gelince sunucu tarafı gerekecek. O aşamada Netlify veya
-> Vercel'e geçilir; ikisi de bu depoyu doğrudan bağlayabilir.
+Preview ortamına ayrıca `DEMO_NOINDEX=1` eklenir; böylece test derlemeleri
+Google'a düşmez.
+
+Node sürümü `.nvmrc` dosyasından okunur (22).
+
+### Statik derlemenin iki özel noktası
+
+Her ikisi de `scripts/build-static.mjs` içinde, tek yerde:
+
+1. **`src/middleware.ts` derleme sırasında geçici olarak kenara alınır.**
+   Middleware her istekte sunucuda çalışır; statik hostta sunucu yok, Next de
+   dosya dururken export'a izin vermez.
+2. **Kök dizine `index.html` yazılır.** Her sayfa `/nl`, `/tr` veya `/en`
+   altında olduğu için `turkserangers.com` kendisi boş kalırdı. Bu sayfa
+   tarayıcının dilini seçip yönlendirir — middleware'in yaptığı işin aynısı.
+
+### Yedek: GitHub Pages
+
+`.github/workflows/demo-pages.yml` elle çalıştırılır (*Actions* sekmesi →
+*Run workflow*). Kulüp domainine dokunmadan birine link göstermek için.
+Çıktı `noindex` etiketlidir.
 
 ---
 
@@ -155,10 +177,12 @@ izni toplamak. İzin olmadan `publishConsent` açılmamalı.
 
 ## Yayına almadan önce yapılacaklar
 
-- [ ] **Logo** — `src/components/layout/Navbar.tsx` ve `Footer.tsx` içindeki
-      kalkan ikonu yerine gerçek logo
-- [ ] **Fotoğraflar** — hero, takım fotoğrafları, oyuncu portreleri, tesis, galeri.
-      Şu an hepsi `PhotoSlot` çerçevesi gösteriyor; `src` verilince otomatik dolar
+- [x] **Logo** — gerçek kulüp arması `public/images/logo.png`, `ClubCrest`
+      bileşeni üzerinden üst menüde, alt bilgide ve sekme ikonunda
+- [ ] **Fotoğraflar** — saha ve altyapı grup fotoğrafı hazır; takım fotoğrafları,
+      oyuncu portreleri, tesis ve galerinin geri kalanı bekliyor. Boş kalanlar
+      `PhotoSlot` çerçevesi gösteriyor; `src` verilince otomatik dolar
+      (`node scripts/foto-web.mjs <kaynak> <ad>` ile web boyutuna indirilir)
 - [ ] **Oyuncu isimleri ve kadrolar** (`src/data/players.ts`) — hepsi uydurma
 - [ ] **Yönetim kurulu ve teknik ekip** (`src/data/club.ts`) — hepsi "Demo …"
 - [ ] **Fikstür ve puan durumu** (`src/data/matches.ts`)
@@ -182,7 +206,8 @@ Demo onaylanırsa sıradaki iş:
 5. **İletişim formu** gerçekten e-posta gönderir
 6. **Row Level Security** — takım sorumlusu veritabanı seviyesinde de sadece
    kendi takımına erişebilir, sadece arayüzde değil
-7. Yayın: Vercel (veya Netlify)
+7. Yayın Cloudflare Pages'te kalır; Supabase tarayıcıdan çağrıldığı için statik
+   yapı bozulmaz
 
 Fikstür/puan durumunun Voetbal Vlaanderen'den otomatik çekilmesi ayrıca
 araştırılmalı; şimdilik elle giriliyor.

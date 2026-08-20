@@ -3,8 +3,9 @@ import { Archivo, Inter } from "next/font/google";
 import { notFound } from "next/navigation";
 import "../globals.css";
 import { getDictionary } from "@/i18n";
-import { isLocale, locales, type Locale } from "@/i18n/config";
+import { defaultLocale, isLocale, locales, type Locale } from "@/i18n/config";
 import { club } from "@/data/club";
+import { siteUrl } from "@/site";
 
 const display = Archivo({
   subsets: ["latin", "latin-ext"],
@@ -33,14 +34,21 @@ export async function generateMetadata({
   const dict = getDictionary(locale);
 
   return {
+    // Zonder deze basis worden de deel-afbeeldingen en canonieke links
+    // relatief; Facebook, WhatsApp en Google hebben absolute URL's nodig.
+    metadataBase: new URL(siteUrl),
     title: {
       default: dict.meta.title,
       template: `%s — FC Turkse Rangers`,
     },
     description: dict.meta.description,
     alternates: {
-      canonical: `/${locale}`,
-      languages: Object.fromEntries(locales.map((l) => [l, `/${l}`])),
+      canonical: `/${locale}/`,
+      languages: {
+        ...Object.fromEntries(locales.map((l) => [l, `/${l}/`])),
+        // Bezoekers uit landen zonder eigen versie krijgen het Nederlands.
+        "x-default": `/${defaultLocale}/`,
+      },
     },
     // Het clubwapen dient ook als tabbladicoon, zodra het bestand er is.
     ...(club.images.logo
@@ -49,8 +57,18 @@ export async function generateMetadata({
     openGraph: {
       title: dict.meta.title,
       description: dict.meta.description,
+      url: `/${locale}/`,
+      siteName: club.name,
       locale,
       type: "website",
+      // Wat WhatsApp, Facebook en Instagram tonen bij een gedeelde link.
+      images: [{ url: club.images.hero, width: 2400, height: 1600, alt: club.name }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: dict.meta.title,
+      description: dict.meta.description,
+      images: [club.images.hero],
     },
     // De demo-uitgave staat met voorbeelddata online. Die mag niet in Google
     // terechtkomen naast — of in plaats van — de echte clubsite.
