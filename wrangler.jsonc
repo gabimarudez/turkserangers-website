@@ -1,0 +1,24 @@
+{
+  // Hoe Cloudflare de site serveert.
+  //
+  // Er is bewust géén "main": zonder Worker-script serveert Cloudflare de
+  // bestanden uit `out/` rechtstreeks vanaf de rand van het netwerk. Geen
+  // opstarttijd, geen rekentijd, dus ook geen rekening per bezoeker.
+  //
+  // `out/` wordt gemaakt door `npm run build:static`.
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "turkserangers-website",
+  "compatibility_date": "2026-08-20",
+
+  "assets": {
+    "directory": "./out",
+
+    // De export schrijft elke pagina als map met index.html (/nl/index.html).
+    // Hiermee komt /nl netjes uit bij /nl/ in plaats van op een 404.
+    "html_handling": "auto-trailing-slash",
+
+    // Een onbekend adres krijgt de 404-pagina van de site zelf, met de juiste
+    // statuscode — niet de kale foutmelding van Cloudflare.
+    "not_found_handling": "404-page"
+  }
+}

@@ -50,34 +50,42 @@ Yani değişiklikler sadece sizin tarayıcınızda kalır, sunucuya gitmez. Sol 
 
 ---
 
-## Yayınlama (Cloudflare Pages)
+## Yayınlama (Cloudflare Workers)
 
 Site **statik** derlenir: sunucu yok, veritabanı yok, ziyaretçi başına ücret yok.
 `npm run build:static` komutu `out/` klasörünü üretir; oradaki dosyalar olduğu
 gibi yayınlanır.
 
-Domain zaten Cloudflare'de kayıtlı olduğu için hosting de Cloudflare Pages'te —
+Domain zaten Cloudflare'de kayıtlı olduğu için hosting de Cloudflare'de —
 DNS aynı panelde, sertifika otomatik.
 
-**Cloudflare Pages ayarları** (*Workers & Pages → Create → Pages → Connect to Git*):
+Nasıl servis edileceği `wrangler.jsonc` içinde yazıyor. Dosyada bilerek `main`
+alanı **yok**: Worker script'i olmadığı için Cloudflare `out/` klasörünü
+doğrudan servis eder, araya kod girmez.
+
+**Cloudflare ayarları** (*Workers & Pages → proje → Settings → Build*):
 
 | Alan | Değer |
 |---|---|
-| Framework preset | None |
 | Build command | `npm run build:static` |
-| Build output directory | `out` |
-| Production branch | `main` |
+| Deploy command | `npx wrangler deploy` |
+| Non-production branch deploy command | `npx wrangler versions upload` |
+| Path | `/` |
 
-**Ortam değişkenleri** (*Settings → Environment variables → Production*):
+**Ortam değişkenleri** (*Settings → Variables and Secrets*):
 
 | Değişken | Değer | Ne işe yarar |
 |---|---|---|
 | `SITE_URL` | `https://turkserangers.com` | Canonical link, sitemap, paylaşım görseli |
 
-Preview ortamına ayrıca `DEMO_NOINDEX=1` eklenir; böylece test derlemeleri
-Google'a düşmez.
-
 Node sürümü `.nvmrc` dosyasından okunur (22).
+
+Yerelde denemek için:
+
+```bash
+npm run build:static
+npx wrangler deploy --dry-run   # ayarları doğrular, hiçbir şey yayınlamaz
+```
 
 ### Statik derlemenin iki özel noktası
 
